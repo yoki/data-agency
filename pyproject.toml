@@ -37,7 +37,7 @@ include = ["data_agency*"]
 package-dir = { "" = "." }
 
 [tool.setuptools.package-data]
-data_agency = ["sandbox/**/*"]
+"data_agency.analysis.sandbox" = ["Dockerfile.runner"]
 
 
 [tool.pytest]

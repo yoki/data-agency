@@ -1,5 +1,8 @@
 data_agency_state
 
+# Demo files (for testing, not part of the main codebase)
+demo_sandbox_integration.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

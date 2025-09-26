@@ -250,10 +250,10 @@ print("After exit - should not print")
         """Profile individual Docker operations for performance testing."""
         print("=== Docker Performance Test ===")
 
-        # Test 1: Simple container run
+        # Test 1: Simple container run with simple Python image
         start = time.time()
         result = subprocess.run(
-            ["docker", "run", "--rm", "codegen-agent-runner:py313", "python", "-c", "print('hello')"],
+            ["docker", "run", "--rm", "python:3.13-slim", "python", "-c", "print('hello')"],
             capture_output=True,
             text=True,
         )
@@ -270,7 +270,7 @@ print("After exit - should not print")
                     "--rm",
                     "-v",
                     f"{temp_dir}:/test_mount:ro",
-                    "codegen-agent-runner:py313",
+                    "python:3.13-slim",
                     "python",
                     "-c",
                     "print('with mount')",
@@ -284,7 +284,7 @@ print("After exit - should not print")
         # Test 3: Check if image exists
         start = time.time()
         result = subprocess.run(
-            ["docker", "image", "inspect", "codegen-agent-runner:py313"], 
+            ["docker", "image", "inspect", "python:3.13-slim"], 
             capture_output=True, 
             text=True
         )
@@ -295,7 +295,6 @@ print("After exit - should not print")
 
     def test_performance_benchmarking(self):
         """Test performance characteristics of the execution environment."""
-        # Skip complex Docker image building and use simple image
         print("\n=== Full Execution Test ===")
         start_time = time.time()
         
@@ -314,6 +313,18 @@ print("Performance test completed")
 
         print(f"Execution took: {exec_end - exec_start:.3f}s")
         print(f"Total time: {exec_end - start_time:.3f}s")
+
+        # Also run the Docker timing operations for comparison
+        try:
+            simple_time, mount_time, inspect_time = self.time_docker_operations()
+            print(f"\n=== Performance Analysis ===")
+            print(f"Simple Docker run: {simple_time:.3f}s")
+            print(f"Docker with mounts: {mount_time:.3f}s")
+            print(f"Full codegen execution: {exec_end - exec_start:.3f}s")
+            if simple_time > 0:
+                print(f"Overhead ratio: {(exec_end - exec_start) / simple_time:.1f}x")
+        except Exception as e:
+            print(f"Performance profiling skipped: {e}")
 
         # Assertions for reasonable performance
         assert result.returncode == 0

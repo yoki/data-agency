@@ -9,7 +9,7 @@
         "type=volume,source=vscode-${localWorkspaceFolderBasename}-server,target=/root/.vscode-server",
         // GEMINI_API key
         "type=bind,source=/mnt/c/mydata/workspace/configs/secrets/data_agency,target=/secrets/data_agency,readonly",
-        "type=bind,source=/mnt/c/mydata/amro-asia.org/AFSR24 - Dollar Financing - General/20_Data/new_download,target=/data_readonly,readonly"
+        "type=bind,source=/mnt/c/path-to-data,target=/data_readonly,readonly"
     ],
     "postCreateCommand": "uv pip install --system -e .[jupyter,dev]",
     "privileged": true,

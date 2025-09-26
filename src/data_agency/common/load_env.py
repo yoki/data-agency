@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # -------------------------------------------------
 # PC specific path for standalone installation
 # -------------------------------------------------
-def _state_path() -> Path:
+def _state_path() -> tuple[Path, Path]:
     # Linux: ~/.local/state/data_agency/
     # Windows: %LOCALAPPDATA%\data_agency\State\
     # Devcontainer override: DATA_AGENCY_STATE=/workspaces/data_agency/state (or any path)
@@ -43,13 +43,20 @@ def _state_path() -> Path:
         # this should load LLM key
         load_dotenv(found_path / ".env", override=False)
 
-    return found_path
+    # load data root path
+    if data_root := os.environ.get("DATA_AGENCY_DATA_ROOT"):
+        pass
+    else:
+        data_root = "C:\\mydata\\amro-asia.org\\AFSR24 - Dollar Financing - General\\20_Data\\new_download"
+
+    return found_path, Path(data_root)
 
 
-STATE_PATH = _state_path()
+STATE_PATH, DATA_ROOT = _state_path()
 LOG_PATH = STATE_PATH / "logs"
 CACHE_PATH = STATE_PATH / "cache"
 CONTAINER_IO_PATH = STATE_PATH / "generated"
+METADATA_PATH = DATA_ROOT / "data_agency_data"
 
 if not STATE_PATH.parent.exists():
     raise FileNotFoundError(

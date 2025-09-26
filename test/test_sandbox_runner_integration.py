@@ -9,7 +9,7 @@ import subprocess
 import pytest
 import pandas as pd
 
-from data_agency.analysis.sandbox.runner import execute
+from data_agency.commands.analyze.sandbox.runner import execute
 
 
 @pytest.mark.slow

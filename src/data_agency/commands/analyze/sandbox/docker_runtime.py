@@ -71,7 +71,7 @@ class DockerRuntime:
 
         # Use the external Dockerfile.runner by default
         dockerfile_content = (
-            files("data_agency.analysis.sandbox").joinpath("Dockerfile.runner").read_text(encoding="utf-8")
+            files("data_agency.commands.analyze.sandbox").joinpath("Dockerfile.runner").read_text(encoding="utf-8")
         )
         tmp_dockerfile_path = "./tmp_dockerfile"
         with open(tmp_dockerfile_path, "w") as f:

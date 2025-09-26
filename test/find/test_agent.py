@@ -1,4 +1,4 @@
-#type: ignore
+# type: ignore
 """
 Tests for the DataFindAgent class.
 """
@@ -79,7 +79,7 @@ async def test_process_natural_language_query_success(agent: DataFindAgent):
     agent.search_service.get_available_categories.return_value = "test categories"  # type: ignore
 
     # Mock decompose query
-    search_params = FindDataSeriesParams(filters=[FilterSet(level1="test")]) # type: ignore
+    search_params = FindDataSeriesParams(filters=[FilterSet(level1="test")])  # type: ignore
     agent.llm_service.decompose_query = AsyncMock(return_value=search_params)
 
     # Mock search results
@@ -102,19 +102,15 @@ async def test_process_natural_language_query_success(agent: DataFindAgent):
         ),
     ]
     mock_search_results = FindMetadataResult(
-        status="success", 
-        count=2, 
-        series=mock_series,
-        search_params=search_params
+        status="success", count=2, series=mock_series, search_params=search_params
     )
-    agent.search_service.find_series.return_value = mock_search_results # type: ignore
+    agent.search_service.find_series.return_value = mock_search_results  # type: ignore
 
     # Mock assessment results (new step in the workflow)
-    from data_agency.commands.find.models import SelectionAssessmentResult
-    mock_assessment = SelectionAssessmentResult(
-        action="PROCEED",
-        assessment="Good selection",
-        guidance_for_category_select_agent=None
+    from data_agency.commands.find.models import CategorySelectionAccessment
+
+    mock_assessment = CategorySelectionAccessment(
+        action="ACCEPT_VARIABLES", justification="Good selection", guidance_for_category_select_agent=""
     )
     agent.llm_service.assess_results = AsyncMock(return_value=mock_assessment)
 
@@ -122,7 +118,7 @@ async def test_process_natural_language_query_success(agent: DataFindAgent):
     mock_synthesis = SynthesisSearchResult(
         detailed_analysis="Test analysis",
         reason_for_selection="Test reason",
-        recommended_series=[RecommendedSeriesItem(code="test1", friendly_name="Test Series 1")],
+        recommended_series=[RecommendedSeriesItem(code="test1", column_name="col1", friendly_name="Test Series 1")],
         variable_name="test_meta",
     )
     agent.llm_service.synthesize_search_results = AsyncMock(return_value=mock_synthesis)
@@ -146,7 +142,6 @@ async def test_process_natural_language_query_success(agent: DataFindAgent):
     agent.display_service.show_selection_assessment.assert_called_once()
     agent.llm_service.synthesize_search_results.assert_called_once()
     agent.display_service.format_and_display_search_results.assert_called_once()
-    agent.display_service.display_final_output.assert_called_once()assert_called_once_with(2)
     # agent.llm_service.synthesize_search_results.assert_called_once_with("successful query", mock_search_results)
     # agent.display_service.format_and_display_search_results.assert_called_once_with(mock_synthesis, mock_series)
     # agent.display_service.display_final_output.assert_called_once_with(mock_final_output)

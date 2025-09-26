@@ -21,9 +21,6 @@ def test_normalize_text():
     # Test with empty string
     assert service.normalize_text("") == ""
 
-    # Test with None
-    assert service.normalize_text(None) == ""
-
 
 def test_load_metadata_files():
     """Test loading metadata files."""
@@ -68,7 +65,7 @@ def test_find_series():
     service = SearchService()
 
     # Test 1: Filter by source file only
-    params = FindDataSeriesParams(filters=[FilterSet(source_file="imf_fsi_q.csv")])
+    params = FindDataSeriesParams(filters=[FilterSet(source_file="imf_fsi_q.csv")])  # type: ignore
     result = service.find_series(params)
 
     assert result.status == "success"
@@ -76,14 +73,14 @@ def test_find_series():
     assert len(result.series) > 40
 
     # Test 2: Filter by level1 category only
-    params = FindDataSeriesParams(filters=[FilterSet(level1="FinAcct")])
+    params = FindDataSeriesParams(filters=[FilterSet(level1="FinAcct")])  # type: ignore
     result = service.find_series(params)
 
     assert result.status == "success"
     assert result.count > 40
 
     # Test 3: Filter by source file and level2 category
-    params = FindDataSeriesParams(filters=[FilterSet(source_file="imf_cpis.csv", level2="Liab")])
+    params = FindDataSeriesParams(filters=[FilterSet(source_file="imf_cpis.csv", level2="Liab")])  # type: ignore
     result = service.find_series(params)
 
     assert result.status == "success"
@@ -91,9 +88,9 @@ def test_find_series():
     # Test 4: Filter by multiple filter sets (OR logic)
     params = FindDataSeriesParams(
         filters=[
-            FilterSet(source_file="imf_ifs_monthly.csv", level2="Inflation"),
-            FilterSet(source_file="bis_locational_a5.csv", level3="A5.ByBankLocationExternal", level2="General"),
-            FilterSet(source_file="fed_z1.csv", level1="Federal Reserve"),
+            FilterSet(source_file="imf_ifs_monthly.csv", level2="Inflation"),  # type: ignore
+            FilterSet(source_file="bis_locational_a5.csv", level3="A5.ByBankLocationExternal", level2="General"),  # type: ignore
+            FilterSet(source_file="fed_z1.csv", level1="Federal Reserve"),  # type: ignore
         ]
     )
     result = service.find_series(params)

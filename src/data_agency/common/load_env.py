@@ -60,7 +60,7 @@ METADATA_PATH = DATA_ROOT / "data_agency_data"
 
 if not STATE_PATH.parent.exists():
     raise FileNotFoundError(
-        f"Parent of state directoy does not exist. Create it and set .env file following readme of codegen-agent: {STATE_PATH}"
+        f"Parent of state directoy does not exist. Create it and set .env file following readme of data-agency: {STATE_PATH}"
     )
 
 for _p in (STATE_PATH, LOG_PATH, CACHE_PATH, CONTAINER_IO_PATH):

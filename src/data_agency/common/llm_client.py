@@ -51,7 +51,7 @@ class ModelClientFactory:
 
         if not api_key:
             raise RuntimeError(
-                "GEMINI_API_KEY_FOR_DATA_AGENCY environment variable is not set. Set .env file following readme of codegen-agent."
+                "GEMINI_API_KEY_FOR_DATA_AGENCY environment variable is not set. Set .env file following readme of data-agency."
             )
 
         return OpenAIChatCompletionClient(
@@ -70,7 +70,7 @@ class ModelClientFactory:
         api_key = os.environ.get("OPENAI_API_KEY")
         if not api_key:
             raise RuntimeError(
-                "OPENAI_API_KEY environment variable is not set. Set .env file following readme of codegen-agent."
+                "OPENAI_API_KEY environment variable is not set. Set .env file following readme of data-agency."
             )
 
         return OpenAIChatCompletionClient(

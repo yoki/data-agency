@@ -1,5 +1,4 @@
 import re
-from mydevtools import filter_lib_traceback  # noqa: F401
 import data_agency.commands.load.load_service as load_service
 
 import data_agency.magic as magic

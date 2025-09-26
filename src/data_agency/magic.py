@@ -1,7 +1,6 @@
 from IPython.display import display, Markdown
 
 import re
-from mydevtools import filter_lib_traceback  # noqa: F401
 
 
 def magic_command_transformer(lines):

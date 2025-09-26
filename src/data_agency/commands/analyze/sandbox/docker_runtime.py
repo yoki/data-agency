@@ -13,8 +13,8 @@ class DockerRuntime:
     """
 
     def __init__(self, image: Optional[str] = None):
-        # You can prebuild/pull an image and set CODEGEN_AGENT_RUNNER_IMAGE to skip builds.
-        self.image = image or os.environ.get("CODEGEN_AGENT_RUNNER_IMAGE", "codegen-agent-runner:py313")
+        # You can prebuild/pull an image and set DATA_AGENCY_RUNNER_IMAGE to skip builds.
+        self.image = image or os.environ.get("DATA_AGENCY_RUNNER_IMAGE", "data-agency-runner:py313")
         self.is_windows = platform.system() == "Windows"
 
     def _run(self, cmd: list[str]) -> subprocess.CompletedProcess:

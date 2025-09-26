@@ -61,7 +61,7 @@ def _cleanup_old_runs(max_runs: int = 50) -> None:
         shutil.rmtree(oldest, ignore_errors=True)
 
 
-def execute(code: str, variables: Dict[str, Any], *, image: str = "codegen-agent-runner:py313") -> ExecutionResult:
+def execute(code: str, variables: Dict[str, Any], *, image: str = "data-agency-runner:py313") -> ExecutionResult:
     """Execute code inside a disposable Docker container with RO inputs and RW outputs.
 
     Returns ExecutionResult(stdout, stderr, returncode).

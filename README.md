@@ -4,7 +4,7 @@ Agentic data retrival and analysis
 
 ## Installation
 ```bash
-pip install codegen-agent@git+https://github.com/yoki/codegen-agent.git@v0.1.0
+pip install data-agency@git+https://github.com/yoki/data-agency.git
 ```
 
 Other than pip, docker container and LLM (Gemini) API setup is needed.

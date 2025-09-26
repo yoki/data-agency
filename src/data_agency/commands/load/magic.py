@@ -2,9 +2,6 @@
 Magic command registration for the load command.
 """
 
-from IPython.core.magic import Magics, magics_class, line_magic
-
-
 # from data_agency.shared.load_from_db import load_from_db
 from IPython.display import display, Markdown
 from IPython.core.getipython import get_ipython

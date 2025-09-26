@@ -7,7 +7,6 @@ This test module validates the Docker-based code execution environment,
 import subprocess
 
 import pytest
-import pandas as pd
 
 from data_agency.commands.analyze.sandbox.runner import execute
 

@@ -27,7 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 jupyter = ["jupyter", "ipython"]
-dev=['pytest', 'pytest-asyncio']
+dev=['pytest', 'pytest-asyncio', 'seaborn','matplotlib']
 
 [tool.setuptools.packages.find]
 where = ["src"]

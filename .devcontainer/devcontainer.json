@@ -8,7 +8,7 @@
         // To avoid re-installation of VS code extensions for every reload
         "type=volume,source=vscode-${localWorkspaceFolderBasename}-server,target=/root/.vscode-server",
         // GEMINI_API key
-        "type=bind,source=/mnt/c/mydata/workspace/configs/secrets/codegen_agent,target=/secrets/codegen_agent,readonly"
+        "type=bind,source=/mnt/c/mydata/workspace/configs/secrets/data_agency,target=/secrets/data_agency,readonly"
     ],
     "postCreateCommand": "uv pip install --system -e .[jupyter,dev]",
     "privileged": true,

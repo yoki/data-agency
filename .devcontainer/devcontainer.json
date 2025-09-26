@@ -1,0 +1,40 @@
+{
+    "name": "Python 3.13",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "mounts": [
+        // To avoid re-installation of VS code extensions for every reload
+        "type=volume,source=vscode-${localWorkspaceFolderBasename}-server,target=/root/.vscode-server",
+        // GEMINI_API key
+        "type=bind,source=/mnt/c/mydata/workspace/configs/secrets/codegen_agent,target=/secrets/codegen_agent,readonly"
+    ],
+    "postCreateCommand": "uv pip install --system -e .[jupyter,dev]",
+    "privileged": true,
+    "containerEnv": {
+        "DATA_AGENCY_STATE": "/workspaces/${localWorkspaceFolderBasename}/data_agency_state"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "charliermarsh.ruff"
+            ],
+            "settings": {
+                "files.eol": "\n",
+                "remote.containers.forwardGpg": false, // saves time
+                "remote.containers.forwardX11": false, // saves time
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": "always",
+                        "source.organizeImports": "never"
+                    }
+                }
+            }
+        }
+    }
+}

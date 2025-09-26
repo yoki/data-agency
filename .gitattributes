@@ -1,0 +1,4 @@
+* text eol=lf
+*.xls  binary
+*.xlsx binary
+*.xlsm binary

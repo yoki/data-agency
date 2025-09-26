@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Optional
 import time
 import platform
-from importlib.resources import files
 import tempfile
 
 
@@ -71,7 +70,8 @@ class DockerRuntime:
         print(f"Docker image '{self.image}' not found, building...")
 
         # Use the external Dockerfile.runner by default
-        dockerfile_content = files("codegen_agent").joinpath("sandbox/Dockerfile.runner").read_text(encoding="utf-8")
+        dockerfile_path = Path(__file__).parent / "Dockerfile.runner"
+        dockerfile_content = dockerfile_path.read_text(encoding="utf-8")
         tmp_dockerfile_path = "./tmp_dockerfile"
         with open(tmp_dockerfile_path, "w") as f:
             f.write(dockerfile_content)

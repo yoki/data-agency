@@ -132,8 +132,13 @@ def describe_dataframe(df: pd.DataFrame, var_name: str, target_countries: list[s
 
             # Process countries with non-zero observations
             non_zero_obs_ccodes = obs_counts[obs_counts["n_obs"] > 0].copy()
-            non_zero_obs_ccodes["rank"] = non_zero_obs_ccodes["n_obs"].rank(method="first")
-            non_zero_obs_ccodes["category"] = pd.qcut(non_zero_obs_ccodes["rank"], 3, labels=["low", "mid", "high"])
+            if len(non_zero_obs_ccodes) >= 3:
+                non_zero_obs_ccodes["rank"] = non_zero_obs_ccodes["n_obs"].rank(method="first")
+                non_zero_obs_ccodes["category"] = pd.qcut(
+                    non_zero_obs_ccodes["rank"], 3, labels=["low", "mid", "high"], duplicates="drop"
+                )
+            elif len(non_zero_obs_ccodes) > 0:
+                non_zero_obs_ccodes["category"] = "nonzero"
 
             # Concatenate the two groups
             final_counts = pd.concat([zero_obs_ccodes, non_zero_obs_ccodes], ignore_index=True)

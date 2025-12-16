@@ -18,13 +18,13 @@ def load(line="", cell=""):
         display(Markdown(help_text))
         return None
 
-    errors = _validate_metadata_list(metadata_lis, shell.user_ns)  # type: ignore
+    errors, single_frequency = _validate_metadata_list(metadata_lis, shell.user_ns)  # type: ignore
     if len(errors) > 0:
         error_message = "\n".join(errors)
         display(Markdown(f"**Failed to parse metadata:**\n{error_message}"))
         return None
 
-    _generate_loading_code(metadata_lis, shell)
+    _generate_loading_code(metadata_lis, shell, single_frequency)
 
 
 def _display_usage():
@@ -56,8 +56,10 @@ to load from the database.
     return usage_text.strip()
 
 
-def _validate_metadata_list(metadata_lis: list[str], user_ns: dict) -> list[str]:
+def _validate_metadata_list(metadata_lis: list[str], user_ns: dict) -> tuple[list[str], bool]:
     errors = []
+    single_frequency = True
+    current_frequency = None
     for metadata_name in metadata_lis:
         if metadata_name not in user_ns:
             errors.append(f"\n Dataframe '{metadata_name}' not found\n")
@@ -73,11 +75,30 @@ def _validate_metadata_list(metadata_lis: list[str], user_ns: dict) -> list[str]
 
         if "series_code" not in metadata.columns:
             errors.append(f"Metadata must contain series_code. ")
-    return errors
+
+        if "frequency" in metadata.columns:
+            frequencies = metadata["frequency"].unique()
+            if len(frequencies) > 1:
+                single_frequency = False
+            else:
+                freq = frequencies[0]
+                if current_frequency is None:
+                    current_frequency = freq
+                elif freq != current_frequency:
+                    single_frequency = False
+
+            for freq in frequencies:
+                if freq not in ["A", "Q", "M", "W", "D"]:
+                    errors.append(f"Invalid frequency value '{freq}' in '{metadata_name}'")
+
+    return errors, single_frequency
 
 
-def _generate_loading_code(metadata_lis: list[str], shell) -> None:
+def _generate_loading_code(metadata_lis: list[str], shell, single_frequency: bool) -> None:
     args = ", ".join(metadata_lis)
-    code = f"from data_agency import load\nraw_data = load([{args}])"
+    if single_frequency:
+        code = f"from data_agency import load\nraw_data: pd.DataFrame= load([{args}])"
+    else:
+        code = f"from data_agency import load\nraw_data_dict: dict[str, pd.DataFrame]= load([{args}])"
     display(Markdown("Data loading code generated to cell below."))
     shell.set_next_input(code, replace=False)

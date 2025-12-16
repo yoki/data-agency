@@ -122,7 +122,11 @@ def describe_dataframe(df: pd.DataFrame, var_name: str, target_countries: list[s
             else:
                 display(Markdown(f"---\n{var}:"))
 
-            df_nonmissing = df2[[var, "ccode"]].dropna(subset=[var])
+            # Include time column if available for bilateral data counting
+            cols_to_select = [var, "ccode"]
+            if "time" in df2.columns:
+                cols_to_select.append("time")
+            df_nonmissing = df2[cols_to_select].dropna(subset=[var])
 
             if is_bilateral and "time" in df_nonmissing.columns:
                 # For bilateral data, count unique time periods per country
@@ -137,7 +141,7 @@ def describe_dataframe(df: pd.DataFrame, var_name: str, target_countries: list[s
             obs_counts = pd.merge(all_ccodes, obs_count, on="ccode", how="left").fillna(0)
 
             # Separate countries with zero observations
-            zero_obs_ccodes = obs_counts[obs_counts["n_obs"] == 0]
+            zero_obs_ccodes = obs_counts[obs_counts["n_obs"] == 0].copy()
             zero_obs_ccodes["category"] = "zero"
 
             # Process countries with non-zero observations

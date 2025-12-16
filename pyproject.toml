@@ -48,12 +48,9 @@ filterwarnings = [
 pythonpath = [
     "/workspaces/synapse/src/data-agency",
 ]
-
-[tool.pytest.ini_options]
 markers = [
     "slow: marks tests as slow"
 ]
-addopts = "-m 'not slow'"
 
 
 # do not show waves for notebooks

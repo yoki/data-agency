@@ -90,6 +90,7 @@ def describe_dataframe(df: pd.DataFrame, var_name: str, target_countries: list[s
     columns = df.columns.tolist()
     display(Markdown(f"**columns:** {columns}"))
     frequency = df.attrs.get("frequency", "NA")
+    is_bilateral = df.attrs.get("bilateral", False) or "counterpart" in columns
     display(Markdown(f"**frequency:** {frequency}"))
     key_cols = ["time", "reporter", "counterpart", "reporter_gr", "cpart_gr", "ccode", "cgroup"]
     variables = [c for c in columns if c not in key_cols]
@@ -122,8 +123,17 @@ def describe_dataframe(df: pd.DataFrame, var_name: str, target_countries: list[s
                 display(Markdown(f"---\n{var}:"))
 
             df_nonmissing = df2[[var, "ccode"]].dropna(subset=[var])
-            obs_count = df_nonmissing["ccode"].value_counts().reset_index()
-            obs_count.columns = ["ccode", "n_obs"]
+
+            if is_bilateral and "time" in df_nonmissing.columns:
+                # For bilateral data, count unique time periods per country
+                obs_count = (
+                    df_nonmissing.groupby("ccode")["time"].nunique().reset_index().rename(columns={"time": "n_obs"})
+                )
+            else:
+                # For non-bilateral data, count total observations
+                obs_count = df_nonmissing["ccode"].value_counts().reset_index()
+                obs_count.columns = ["ccode", "n_obs"]
+
             obs_counts = pd.merge(all_ccodes, obs_count, on="ccode", how="left").fillna(0)
 
             # Separate countries with zero observations

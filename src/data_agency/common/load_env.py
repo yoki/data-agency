@@ -4,12 +4,13 @@ import os
 from pathlib import Path
 from platformdirs import PlatformDirs
 from dotenv import load_dotenv
+from typing import Union
 
 
 # -------------------------------------------------
 # PC specific path for standalone installation
 # -------------------------------------------------
-def _state_path() -> tuple[Path, Path]:
+def _state_path() -> tuple[Path, Union[Path, None]]:
     # Linux: ~/.local/state/data_agency/
     # Windows: %LOCALAPPDATA%\data_agency\State\
     # Devcontainer override: DATA_AGENCY_STATE=/workspaces/data_agency/state (or any path)
@@ -44,19 +45,45 @@ def _state_path() -> tuple[Path, Path]:
         load_dotenv(found_path / ".env", override=False)
 
     # load data root path
-    if data_root := os.environ.get("DATA_AGENCY_DATA_ROOT"):
-        pass
-    else:
-        data_root = "C:\\mydata\\amro-asia.org\\AFSR24 - Dollar Financing - General\\20_Data\\new_download"
+    if data_root_str := os.environ.get("DATA_AGENCY_DATA_ROOT"):
+        if os.path.exists(data_root_str):
+            data_root = Path(data_root_str).expanduser().resolve()
+        else:
+            raise RuntimeError(f"DATA_AGENCY_DATA_ROOT path set in environment does not exist: {data_root_str}")
 
-    return found_path, Path(data_root)
+    else:
+        candidates = [
+            "/mnt/c/mydata/amro-asia.org/AFSR24 - Dollar Financing - General/20_Data/new_download",
+            "C:\\mydata\\amro-asia.org\\AFSR24 - Dollar Financing - General\\20_Data\\new_download",
+        ]
+        data_root = next((Path(p) for p in candidates if os.path.exists(p)), None)
+
+    return found_path, data_root
+
+
+class NoDataRootError(Exception):
+    def __init__(self):
+        super().__init__(
+            "DATA_AGENCY_DATA_ROOT was not found in the environment or in standard "
+            "locations. Set the DATA_AGENCY_DATA_ROOT environment variable. "
+            "(e.g./mnt/c/mydata/amro-asia.org/AFSR24 - Dollar Financing - General/20_Data/new_download )"
+        )
+
+
+def raise_if_no_data_root():
+    if DATA_ROOT is None:
+        raise NoDataRootError()
+    return False
 
 
 STATE_PATH, DATA_ROOT = _state_path()
 LOG_PATH = STATE_PATH / "logs"
 CACHE_PATH = STATE_PATH / "cache"
 CONTAINER_IO_PATH = STATE_PATH / "generated"
-METADATA_PATH = DATA_ROOT / "data_agency_data"
+if DATA_ROOT is None:
+    METADATA_PATH = None
+else:
+    METADATA_PATH = DATA_ROOT / "data_agency_data"
 
 if not STATE_PATH.parent.exists():
     raise FileNotFoundError(

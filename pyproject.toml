@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data-agency"
-version = "0.1.0"
+version = "0.1.1"
 description = "Agentic data retrival and analysis."
 authors = [
     { name = "Yoki", email = "yotokyos@gmail.com" }

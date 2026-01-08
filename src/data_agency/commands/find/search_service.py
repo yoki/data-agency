@@ -6,13 +6,14 @@ import pandas as pd
 from typing import Dict, List, Any
 import csv
 import io
-from ...common.load_env import METADATA_PATH
+from ...common.load_env import METADATA_PATH, raise_if_no_data_root
 from .models import SeriesMetadata, FindMetadataResult, FindDataSeriesParams, FilterSet
 
 # Constants for file paths
-SOURCES_PATH = METADATA_PATH / "sources.json"
-CATEGORIES_PATH = METADATA_PATH / "unique_categories.csv"
-MANIFEST_PATH = METADATA_PATH / "manifest.csv"
+if METADATA_PATH is not None:
+    SOURCES_PATH = METADATA_PATH / "sources.json"
+    CATEGORIES_PATH = METADATA_PATH / "unique_categories.csv"
+    MANIFEST_PATH = METADATA_PATH / "manifest.csv"
 
 
 class SearchService:
@@ -144,6 +145,7 @@ class SearchService:
             raise e
 
     def load_manifest(self) -> List[Dict[str, Any]]:
+        raise_if_no_data_root()
         with open(MANIFEST_PATH, "r") as f:
             csv_data = f.read()
             data_list = []
@@ -162,13 +164,16 @@ class SearchService:
             return data_list
 
     def load_sources(self) -> Dict[str, Any]:
+        raise_if_no_data_root()
         with open(SOURCES_PATH, "r") as f:
             return json.load(f)
 
     def get_sources_dataframe(self) -> pd.DataFrame:
+        raise_if_no_data_root()
         return pd.read_json(SOURCES_PATH).T
 
     def get_available_categories(self) -> pd.DataFrame:
+        raise_if_no_data_root()
         df = pd.read_csv(MANIFEST_PATH)
         df = df[["source_file", "level1", "level2", "level3"]].drop_duplicates()
         df.rename(

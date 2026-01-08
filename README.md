@@ -19,11 +19,13 @@ RUN mkdir -p /etc/docker && \
     echo '{\n  "storage-driver": "fuse-overlayfs"\n}' > /etc/docker/daemon.json
 ```
 
-### API key and other env vars
+### API key and Data locations
 Create `.env` file:
 ```bash
 GEMINI_API_KEY_FOR_DATA_AGENCY=your_gemini_api_key_here
+DATA_AGENCY_DATA_ROOT=/Dollar Financing - General/20_Data/new_download
 ```
+
 
 **File locations (priority order):**
 1. `$DATA_AGENCY_DOTENV_PATH` (if set)

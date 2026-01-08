@@ -12,9 +12,10 @@ from typing import Union
 import pandas as pd
 from lettuce_logger import pp
 import numpy as np
-from ...common.load_env import METADATA_PATH, DATA_ROOT
+from ...common.load_env import METADATA_PATH, DATA_ROOT, raise_if_no_data_root
 
-COUNTRY_CODES_PATH = METADATA_PATH / "country_codes.csv"
+if METADATA_PATH is not None:
+    COUNTRY_CODES_PATH = METADATA_PATH / "country_codes.csv"
 
 REQUIRED_COLUMNS = ["series_code", "source_file", "variable_name", "description", "frequency"]
 ALLOWED_FREQUENCIES = ["Q", "M", "A", "D"]
@@ -28,11 +29,12 @@ def load_from_metadata(source_file_name: str, meta_df: pd.DataFrame) -> pd.DataF
     metadata mappings, and attaches metadata as DataFrame attributes. Only keeps
     structural columns and variables specified in the metadata.
     """
+    raise_if_no_data_root()
 
     if meta_df.source_file.nunique() > 1:
         raise ValueError("Metadata DataFrame should only contain one source file in load_from_metadata.")
 
-    full_path = DATA_ROOT / source_file_name
+    full_path = DATA_ROOT / source_file_name  # type: ignore
     try:
         data = pd.read_csv(full_path)
         csv_columns = data.columns.tolist()
@@ -74,7 +76,7 @@ def load_from_metadata(source_file_name: str, meta_df: pd.DataFrame) -> pd.DataF
         missing_cols = set(col_names_in_orig_database) - set(variable_cols)
         raise ValueError(f"The following columns are not in the data file '{full_path}': {missing_cols}")
 
-    df = df.dropna(subset=variable_cols, how="all")
+    df = df.dropna(subset=variable_cols, how="all")  # type: ignore
     df = df.loc[~(df[variable_cols].isna()).all(axis=1)]
     df.rename(columns=orig_col_name_to_var_name, inplace=True)
 
@@ -141,7 +143,7 @@ def load(metadata_lis: Union[pd.DataFrame, list[pd.DataFrame]]) -> Union[pd.Data
         - Dict[str, DataFrame]: If multiple frequencies, keys combine frequency and
           bilateral info (e.g., "Q_bilateral", "M", "A_bilateral")
     """
-
+    raise_if_no_data_root()
     # return dataframe with attr about columns, source files, frequency, bilateral
     if isinstance(metadata_lis, pd.DataFrame):
         metadata_lis = [metadata_lis]
@@ -181,6 +183,7 @@ def load(metadata_lis: Union[pd.DataFrame, list[pd.DataFrame]]) -> Union[pd.Data
             "cgroup": "Country group from [AE, Plus3, EMDE, ASEAN5, BCLMV, SmallTerritories,Others]",
         },
     }
+
     country_codes_df = pd.read_csv(COUNTRY_CODES_PATH)
     country_codes_df = country_codes_df[["ccode", "cname"]].copy()
     for freq, meta_by_bilateral_source in meta_by_freq_bilateral_source.items():
